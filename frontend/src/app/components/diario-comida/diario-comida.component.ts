@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Importante para el formulario
+import { FormsModule } from '@angular/forms'; 
 import { ComidaService } from '../../services/comida.service';
 import { Comida } from '../../interfaces/comida';
 
@@ -12,6 +12,8 @@ import { Comida } from '../../interfaces/comida';
 })
 export class DiarioComidaComponent implements OnInit {
   listComidas: Comida[] = [];
+  listComidasFiltradas: Comida[] = []; 
+  
   nuevaComida: Comida = { alimento: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0, fecha: '' };
 
   constructor(private _comidaService: ComidaService) {}
@@ -23,12 +25,20 @@ export class DiarioComidaComponent implements OnInit {
   obtenerComidas() {
     this._comidaService.getListComidas().subscribe(data => {
       this.listComidas = data;
+      this.listComidasFiltradas = data; 
     });
+  }
+
+  filtrarComidas(event: any) {
+    const valor = event.target.value.toLowerCase();
+    this.listComidasFiltradas = this.listComidas.filter(comida => 
+      comida.alimento.toLowerCase().includes(valor)
+    );
   }
 
   agregarComida() {
     this._comidaService.saveComida(this.nuevaComida).subscribe(() => {
-      this.obtenerComidas(); // Refresca la tabla
+      this.obtenerComidas(); 
       this.limpiarFormulario();
     });
   }
@@ -41,5 +51,16 @@ export class DiarioComidaComponent implements OnInit {
 
   limpiarFormulario() {
     this.nuevaComida = { alimento: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0, fecha: '' };
+  }
+
+  get totalCalorias(): number {
+    return this.listComidas.reduce((acc, obj) => acc + obj.calorias, 0);
+  }
+
+  get porcentajeProgreso(): number {
+    const meta = 2000; 
+    const porcentaje = (this.totalCalorias / meta) * 100;
+    // Evitamos que la barra visualmente se salga del 100%
+    return porcentaje > 100 ? 100 : porcentaje;
   }
 }

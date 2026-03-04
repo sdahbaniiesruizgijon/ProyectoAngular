@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NutricionApiService } from '../../services/nutricion-api.service';
 import { Chart, registerables } from 'chart.js';
+import { ComidaService } from '../../services/comida.service';
 
 Chart.register(...registerables);
 
@@ -19,7 +20,23 @@ export class AlimentosApiComponent {
 
   @ViewChild('myChart') chartCanvas!: ElementRef;
 
-  constructor(private _apiExterna: NutricionApiService) {}
+
+  constructor(private _apiExterna: NutricionApiService, private _comidaService: ComidaService) {}
+
+  guardarEnDiario() {
+  const nueva: any = {
+    alimento: this.alimentoEncontrado.label,
+    calorias: Math.round(this.alimentoEncontrado.nutrients.ENERC_KCAL),
+    proteinas: this.alimentoEncontrado.nutrients.PROCNT,
+    carbohidratos: this.alimentoEncontrado.nutrients.CHOCDF,
+    grasas: this.alimentoEncontrado.nutrients.FAT,
+    fecha: new Date().toISOString().split('T')[0] // Fecha de hoy
+  };
+
+  this._comidaService.saveComida(nueva).subscribe(() => {
+    alert('¡Alimento guardado en tu diario de Laravel!');
+  });
+}
 
   buscar() {
     if (this.busqueda.trim() === '') return;
