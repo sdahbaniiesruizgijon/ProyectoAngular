@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h2 class="text-center">Buscador Nutricional (API Externa)</h2>
+  
+  <div class="input-group mb-4">
+    <input type="text" [(ngModel)]="busqueda" class="form-control" placeholder="Ej: Manzana, Pollo, Pizza...">
+    <button (click)="buscar()" class="btn btn-primary">Buscar Alimento</button>
+  </div>
+
+  <div class="row" *ngIf="alimentoEncontrado">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h3>{{ alimentoEncontrado.label }}</h3>
+        <p><strong>Categoría:</strong> {{ alimentoEncontrado.category }}</p>
+        <ul class="list-group">
+          <li class="list-group-item">Calorías: {{ alimentoEncontrado.nutrients.ENERC_KCAL }} kcal</li>
+          <li class="list-group-item">Proteínas: {{ alimentoEncontrado.nutrients.PROCNT }}g</li>
+          <li class="list-group-item">Carbohidratos: {{ alimentoEncontrado.nutrients.CHOCDF }}g</li>
+          <li class="list-group-item">Grasas: {{ alimentoEncontrado.nutrients.FAT }}g</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h4 class="text-center">Distribución de Macronutrientes</h4>
+        <canvas #myChart></canvas>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <h2>Mi Diario de Nutrición</h2>
+  
+  <div class="card p-3 mb-4">
+    <h4>Registrar Alimento</h4>
+    <div class="row">
+      <div class="col-md-3">
+        <input type="text" [(ngModel)]="nuevaComida.alimento" class="form-control" placeholder="Nombre del alimento">
+      </div>
+      <div class="col-md-2">
+        <input type="number" [(ngModel)]="nuevaComida.calorias" class="form-control" placeholder="Calorías">
+      </div>
+      <div class="col-md-3">
+        <input type="date" [(ngModel)]="nuevaComida.fecha" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <button (click)="agregarComida()" class="btn btn-success w-100">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-hover mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>Alimento</th>
+        <th>Calorías</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let comida of listComidas">
+        <td>{{ comida.alimento }}</td>
+        <td>{{ comida.calorias }} kcal</td>
+        <td>{{ comida.fecha }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm me-2">Editar</button>
+          <button (click)="eliminarComida(comida.id)" class="btn btn-danger btn-sm">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
