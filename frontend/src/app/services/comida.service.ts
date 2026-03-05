@@ -8,8 +8,8 @@ import { Comida } from '../interfaces/comida';
 })
 export class ComidaService {
   // La URL de tu API de Laravel (Requisito 4)
-  private myAppUrl = 'http://localhost:8000/';
-  private myApiUrl = 'api/comidas/';
+  private myAppUrl = 'http://127.0.0.1:8000';
+  private myApiUrl = '/api/comidas/';
 
   constructor(private http: HttpClient) { }
 
@@ -23,10 +23,10 @@ export class ComidaService {
     return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}${id}`);
   }
 
-  // Guardar (Alta)
-  saveComida(comida: Comida): Observable<void> {
-    return this.http.post<void>(`${this.myAppUrl}${this.myApiUrl}`, comida);
-  }
+  // Guardar 
+saveComida(comida: any): Observable<any> {
+  return this.http.post(`${this.myAppUrl}${this.myApiUrl}`, comida);
+}
 
   // Ver uno por ID
   getComida(id: number): Observable<Comida> {

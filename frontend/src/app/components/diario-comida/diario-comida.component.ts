@@ -22,19 +22,29 @@ export class DiarioComidaComponent implements OnInit {
     this.obtenerComidas();
   }
 
-  obtenerComidas() {
-    this._comidaService.getListComidas().subscribe(data => {
+ // diario-comida.component.ts
+
+obtenerComidas() {
+  this._comidaService.getListComidas().subscribe({
+    next: (data) => {
       this.listComidas = data;
-      this.listComidasFiltradas = data; 
-    });
-  }
+      this.listComidasFiltradas = data;
+    },
+    error: (e) => console.error(e)
+  });
+}
 
   filtrarComidas(event: any) {
-    const valor = event.target.value.toLowerCase();
+  const valor = event.target.value.toLowerCase().trim();
+
+  if (valor === '') {
+    this.listComidasFiltradas = this.listComidas; 
+  } else {
     this.listComidasFiltradas = this.listComidas.filter(comida => 
       comida.alimento.toLowerCase().includes(valor)
     );
   }
+}
 
   agregarComida() {
     this._comidaService.saveComida(this.nuevaComida).subscribe(() => {
