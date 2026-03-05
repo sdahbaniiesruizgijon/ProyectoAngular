@@ -22,7 +22,6 @@ export class DiarioComidaComponent implements OnInit {
     this.obtenerComidas();
   }
 
- // diario-comida.component.ts
 
 obtenerComidas() {
   this._comidaService.getListComidas().subscribe({
@@ -70,7 +69,6 @@ obtenerComidas() {
   get porcentajeProgreso(): number {
     const meta = 2000; 
     const porcentaje = (this.totalCalorias / meta) * 100;
-    // Evitamos que la barra visualmente se salga del 100%
     return porcentaje > 100 ? 100 : porcentaje;
   }
 }

@@ -7,7 +7,6 @@ import { Comida } from '../interfaces/comida';
   providedIn: 'root'
 })
 export class ComidaService {
-  // La URL de tu API de Laravel (Requisito 4)
   private myAppUrl = 'http://127.0.0.1:8000';
   private myApiUrl = '/api/comidas/';
 
