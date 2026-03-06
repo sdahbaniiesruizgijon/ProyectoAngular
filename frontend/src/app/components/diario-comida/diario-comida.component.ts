@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ComidaService } from '../../services/comida.service';
 import { Comida } from '../../interfaces/comida';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-diario-comida',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './diario-comida.component.html'
 })
 export class DiarioComidaComponent implements OnInit {

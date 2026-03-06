@@ -1,0 +1,62 @@
+<div class="container mt-5">
+  <div class="card shadow border-0">
+    <div class="card-header bg-primary text-white py-3">
+      <h3 class="mb-0">Editar Registro de Alimento</h3>
+    </div>
+    <div class="card-body p-4">
+      
+      <div class="row g-3 align-items-center">
+        
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-light">Alimento</span>
+            <input type="text" [(ngModel)]="comida.alimento" class="form-control" placeholder="Nombre">
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group">
+            <span class="input-group-text bg-light">Calorías</span>
+            <input type="number" [(ngModel)]="comida.calorias" class="form-control" placeholder="0">
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="input-group">
+            <span class="input-group-text bg-light">📅</span>
+            <input type="date" [(ngModel)]="comida.fecha" class="form-control">
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <button (click)="actualizarComida()" class="btn btn-success w-100 fw-bold">
+            Guardar
+          </button>
+        </div>
+
+      </div>
+
+      <div class="row g-3 mt-3">
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Proteínas (g)</label>
+          <input type="number" [(ngModel)]="comida.proteinas" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Carbohidratos (g)</label>
+          <input type="number" [(ngModel)]="comida.carbohidratos" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted">Grasas (g)</label>
+          <input type="number" [(ngModel)]="comida.grasas" class="form-control">
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex justify-content-end">
+        <button (click)="cancelar()" class="btn btn-outline-secondary px-4">
+          Cancelar y Volver
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

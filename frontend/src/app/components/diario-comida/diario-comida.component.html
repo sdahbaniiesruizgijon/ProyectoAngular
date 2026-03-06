@@ -4,19 +4,25 @@
   <div class="card shadow-sm p-3 mb-4 border-0 bg-light">
     <h4 class="text-secondary">Registrar Alimento</h4>
     <div class="row g-2">
-      <div class="col-md-3">
-        <input type="text" [(ngModel)]="nuevaComida.alimento" class="form-control" placeholder="Nombre del alimento">
-      </div>
-      <div class="col-md-2">
-        <input type="number" [(ngModel)]="nuevaComida.calorias" class="form-control" placeholder="Calorías">
-      </div>
-      <div class="col-md-3">
-        <input type="date" [(ngModel)]="nuevaComida.fecha" class="form-control">
-      </div>
-      <div class="col-md-2">
-        <button (click)="agregarComida()" class="btn btn-success w-100 fw-bold">Añadir</button>
-      </div>
+      <div class="row g-2 align-items-center"> <div class="col-md-3">
+    <input type="text" [(ngModel)]="nuevaComida.alimento" class="form-control" placeholder="Nombre del alimento">
+  </div>
+  
+  <div class="col-md-3">
+    <div class="input-group">
+      <span class="input-group-text">Calorías</span>
+      <input type="number" [(ngModel)]="nuevaComida.calorias" class="form-control" min="0" placeholder="0">
     </div>
+  </div>
+
+  <div class="col-md-3">
+    <input type="date" [(ngModel)]="nuevaComida.fecha" class="form-control">
+  </div>
+
+  <div class="col-md-2">
+    <button (click)="agregarComida()" class="btn btn-success w-100 fw-bold">Añadir</button>
+  </div>
+</div>
   </div>
 
   <label class="form-label fw-bold">Consumo diario:</label>
@@ -56,8 +62,10 @@
           <td><span class="badge bg-info text-dark">{{ comida.calorias }} kcal</span></td>
           <td>{{ comida.fecha }}</td>
           <td class="text-center">
-            <button class="btn btn-outline-primary btn-sm me-2">Editar</button>
-            <button (click)="eliminarComida(comida.id)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+       <button [routerLink]="['/editar', comida.id]" class="btn btn-outline-primary btn-sm me-2">
+            Editar
+       </button>
+                   <button (click)="eliminarComida(comida.id)" class="btn btn-outline-danger btn-sm">Eliminar</button>
           </td>
         </tr>
         <tr *ngIf="listComidasFiltradas.length === 0">
