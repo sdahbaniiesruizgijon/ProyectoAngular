@@ -19,4 +19,11 @@ class RegistroComida extends Model
         'grasas',
         'fecha',
     ];
+
+    public function diarios()
+    {
+        return $this->belongsToMany(diarios::class, 'diario_alimento')
+                    ->withPivot('cantidad_gramos')
+                    ->withTimestamps();
+    }
 }
