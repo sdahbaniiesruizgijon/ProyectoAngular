@@ -16,7 +16,6 @@ protected $table = 'registro_comidas';
         'proteinas',
         'carbohidratos',
         'grasas',
-        'fecha',
     ];
 
     public function diarios()

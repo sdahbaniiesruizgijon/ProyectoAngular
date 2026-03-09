@@ -3,7 +3,8 @@ import { NutricionApiService } from '../../services/nutricion-api.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { Chart } from 'chart.js/auto'; 
-import { ComidaService } from '../../services/comida.service'; // <--- IMPORTAMOS EL SERVICIO DE LARAVEL
+import { ComidaService } from '../../services/comida.service'; 
+import { HttpClient } from '@angular/common/http';
 
 interface Nutrients {
   ENERC_KCAL: number;
@@ -14,8 +15,9 @@ interface Nutrients {
 
 interface AlimentoAPI {
   label: string;
-  image: string; // Para la imagen
+  image: string; 
   nutrients: Nutrients;
+  originalData?: any; 
 }
 
 @Component({
@@ -32,7 +34,8 @@ export class AlimentosApiComponent implements OnInit {
 
   constructor(
     private _apiExterna: NutricionApiService,
-    private _comidaService: ComidaService 
+    private _comidaService: ComidaService,
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -57,7 +60,8 @@ export class AlimentosApiComponent implements OnInit {
             PROCNT: p.nutriments.proteins_100g || 0,
             CHOCDF: p.nutriments.carbohydrates_100g || 0,
             FAT: p.nutriments.fat_100g || 0
-          }
+          },
+          originalData: p
         }));
 
       if (this.resultadosBusqueda.length > 0) {
@@ -68,32 +72,26 @@ export class AlimentosApiComponent implements OnInit {
     });
   }
 
+  seleccionarAlimento(alimento: AlimentoAPI) {
+    this.generarGrafico(alimento.nutrients);
+  }
 
-seleccionarAlimento(alimento: AlimentoAPI) {
-  this.generarGrafico(alimento.nutrients);
-}
-
-  importarAlDiario(alimento: any) {
-    const nueva: any = {
-      alimento: alimento.label,
-      calorias: Math.round(alimento.nutrients.ENERC_KCAL),
-      proteinas: alimento.nutrients.PROCNT || 0,
-      carbohidratos: alimento.nutrients.CHOCDF || 0,
-      grasas: alimento.nutrients.FAT || 0,
-      fecha: new Date().toISOString().split('T')[0]
+  importarAlDiario(producto: any) {
+    const p = producto.originalData ? producto.originalData : producto;
+    
+    const comidaParaGuardar = {
+      alimento: p.product_name || producto.label || 'Sin nombre',
+      calorias: p.nutriments?.['energy-kcal_100g'] || producto.nutrients?.ENERC_KCAL || 0,
+      proteinas: p.nutriments?.proteins_100g || producto.nutrients?.PROCNT || 0,
+      carbohidratos: p.nutriments?.carbohydrates_100g || producto.nutrients?.CHOCDF || 0,
+      grasas: p.nutriments?.fat_100g || producto.nutrients?.FAT || 0
     };
 
-    this._comidaService.saveComida(nueva).subscribe({
-      next: (res: any) => {
-        alert(`¡"${alimento.label}" guardado en Laravel!`);
-        console.log('Respuesta:', res);
-        
-      },
-      error: (err: any) => {
-        console.error('Error:', err);
-        alert('Error al conectar con el servidor');
-      }
-    });
+    this.http.post('http://127.0.0.1:8000/api/comidas', comidaParaGuardar)
+      .subscribe({
+        next: (res) => alert('¡Alimento importado con éxito!'),
+        error: (err) => console.error('Error detallado:', err)
+      });
   }
 
   cargarAlimentosDesdeDB() {
@@ -117,9 +115,9 @@ seleccionarAlimento(alimento: AlimentoAPI) {
             nutrients.FAT
           ],
           backgroundColor: [
-            'rgba(255, 99, 132, 0.8)', // Proteínas (Rojo)
-            'rgba(54, 162, 235, 0.8)', // Carbohidratos (Azul)
-            'rgba(255, 206, 86, 0.8)'  // Grasas (Amarillo)
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)'
           ],
           borderColor: [
             'rgba(255, 99, 132, 1)',
@@ -137,7 +135,7 @@ seleccionarAlimento(alimento: AlimentoAPI) {
           },
           title: {
             display: true,
-            text: `Macronutrientes: ${this.resultadosBusqueda[0]?.label || 'Alimento'}`
+            text: `Macronutrientes`
           }
         }
       }

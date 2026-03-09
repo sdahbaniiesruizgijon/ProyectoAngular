@@ -17,28 +17,23 @@ class DiarioController extends Controller
     return \App\Models\diarios::with('alimentos')->where('user_id', 1)->get();
 }
 
-   public function store(Request $request)
+ public function store(Request $request)
 {
-    $request->validate([
-        'titulo' => 'required|string',
-        'fecha' => 'required|date',
-        'alimentos' => 'required|array',
-    ]);
-
-    $diario = \App\Models\diarios::create([
-        'user_id' => 1, 
+    $diario = diarios::create([
+        'user_id' => 1, // O auth()->id() si ya tienes login
         'titulo' => $request->titulo,
-        'descripcion' => $request->descripcion ?? '', 
         'fecha' => $request->fecha,
+        'descripcion' => $request->descripcion
     ]);
 
-    foreach ($request->alimentos as $item) {
-        $diario->alimentos()->attach($item['id'], [
-            'cantidad_gramos' => $item['cantidad']
+    // IMPORTANTE: El nombre 'alimentos' debe coincidir con el método del modelo
+    if ($request->has('alimento_id')) {
+        $diario->alimentos()->attach($request->alimento_id, [
+            'cantidad_gramos' => $request->cantidad_gramos ?? 100
         ]);
     }
 
-    return response()->json($diario->load('alimentos'), 201);
+    return response()->json($diario, 201);
 }
     public function show($id)
     {

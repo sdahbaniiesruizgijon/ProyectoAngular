@@ -7,26 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class diarios extends Model
 {
-
     use HasFactory;
 
-    protected $fillable = ['user_id', 'titulo', 'descripcion', 'fecha'];
-
-    protected $appends = ['totales'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    // ESTO ES OBLIGATORIO para que el controlador pueda guardar
+    protected $fillable = ['user_id', 'titulo', 'fecha', 'descripcion'];
 
     public function alimentos()
     {
+        // Asegúrate de que los nombres de las tablas coincidan con lo que hicimos en SQL
         return $this->belongsToMany(RegistroComida::class, 'diario_alimento', 'diario_id', 'registro_comida_id')
                     ->withPivot('cantidad_gramos')
                     ->withTimestamps();
     }
 
-    // Lógica para calcular el total del "Blog"
+
     public function getTotalesAttribute()
     {
         $totales = [
