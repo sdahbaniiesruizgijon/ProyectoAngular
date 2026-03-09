@@ -12,7 +12,7 @@ class diarios extends Model
 
     protected $fillable = ['user_id', 'titulo', 'descripcion', 'fecha'];
 
-    protected $appends = ['total_calorias'];
+    protected $appends = ['totales'];
 
     public function user()
     {

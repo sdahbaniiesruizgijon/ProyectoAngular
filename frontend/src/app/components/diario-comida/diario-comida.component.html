@@ -1,77 +1,97 @@
 <div class="container mt-4">
-  <h2 class="mb-4">Mi Diario de Nutrición</h2>
-  
-  <div class="card shadow-sm p-3 mb-4 border-0 bg-light">
-    <h4 class="text-secondary">Registrar Alimento</h4>
-    <div class="row g-2">
-      <div class="row g-2 align-items-center"> <div class="col-md-3">
-    <input type="text" [(ngModel)]="nuevaComida.alimento" class="form-control" placeholder="Nombre del alimento">
-  </div>
-  
-  <div class="col-md-3">
-    <div class="input-group">
-      <span class="input-group-text">Calorías</span>
-      <input type="number" [(ngModel)]="nuevaComida.calorias" class="form-control" min="0" placeholder="0">
-    </div>
-  </div>
+  <h2 class="mb-4">Mi Agenda de Nutrición</h2>
 
-  <div class="col-md-3">
-    <input type="date" [(ngModel)]="nuevaComida.fecha" class="form-control">
-  </div>
+  <div class="row">
+    <div class="col-lg-5">
+      <div class="card shadow-sm p-3 mb-4 border-0 bg-light">
+        <h4 class="text-secondary border-bottom pb-2">Nuevo Blog de Comida</h4>
+        
+        <div class="mb-3">
+          <label class="form-label fw-bold">Título del Blog</label>
+          <input type="text" [(ngModel)]="nuevoBlog.titulo" class="form-control" placeholder="Ej: Mi Desayuno Fitness">
+        </div>
 
-  <div class="col-md-2">
-    <button (click)="agregarComida()" class="btn btn-success w-100 fw-bold">Añadir</button>
-  </div>
-</div>
-  </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Fecha</label>
+          <input type="date" [(ngModel)]="nuevoBlog.fecha" class="form-control">
+        </div>
 
-  <label class="form-label fw-bold">Consumo diario:</label>
-  <div class="progress mb-4" style="height: 30px; border-radius: 15px; overflow: hidden;">
-    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
-         role="progressbar" 
-         [style.width.%]="porcentajeProgreso">
-      {{ totalCalorias }} / 2000 kcal
-    </div>
-  </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Añadir alimentos de mi biblioteca:</label>
+          <select class="form-select" #selectAlimento (change)="prepararAlimento(bibliotecaAlimentos[selectAlimento.selectedIndex - 1]); selectAlimento.selectedIndex = 0">
+            <option value="" disabled selected>Selecciona un alimento...</option>
+            <option *ngFor="let a of bibliotecaAlimentos" [ngValue]="a">
+              {{ a.alimento }} ({{ a.calorias }} kcal)
+            </option>
+          </select>
+        </div>
 
-  <div class="row mb-3">
-    <div class="col-md-12">
-      <div class="input-group">
-        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search">🔎</i></span>
-        <input type="text" 
-               class="form-control border-start-0" 
-               placeholder="Filtrar mis registros por nombre..." 
-               (input)="filtrarComidas($event)">
+        <div class="list-group mb-3 shadow-sm" *ngIf="nuevoBlog.alimentosSeleccionados.length > 0">
+          <div *ngFor="let item of nuevoBlog.alimentosSeleccionados; let i = index" 
+               class="list-group-item d-flex justify-content-between align-items-center bg-white">
+            <div>
+              <span class="fw-bold">{{ item.nombre }}</span><br>
+              <small class="text-muted">{{ (item.calorias * item.cantidad / 100).toFixed(0) }} kcal</small>
+            </div>
+            <div class="d-flex align-items-center">
+              <input type="number" [(ngModel)]="item.cantidad" class="form-control form-control-sm text-center" style="width: 65px;">
+              <span class="ms-1 me-2 small">g</span>
+              <button (click)="quitarAlimentoPreparado(i)" class="btn btn-sm btn-outline-danger border-0">
+                <i class="bi bi-trash">❌</i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info py-2" *ngIf="nuevoBlog.alimentosSeleccionados.length > 0">
+          Total Calorías: <strong>{{ totalKcalPreparadas | number:'1.0-0' }} kcal</strong>
+        </div>
+
+        <button (click)="guardarAgendaCompleta()" 
+                [disabled]="!nuevoBlog.titulo || nuevoBlog.alimentosSeleccionados.length === 0"
+                class="btn btn-success w-100 fw-bold py-2 shadow-sm">
+          🚀 Publicar en mi Diario
+        </button>
       </div>
     </div>
-  </div>
 
-  <div class="table-responsive shadow-sm rounded">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th>Alimento</th>
-          <th>Calorías</th>
-          <th>Fecha</th>
-          <th class="text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let comida of listComidasFiltradas">
-          <td class="fw-bold">{{ comida.alimento }}</td>
-          <td><span class="badge bg-info text-dark">{{ comida.calorias }} kcal</span></td>
-          <td>{{ comida.fecha }}</td>
-          <td class="text-center">
-       <button [routerLink]="['/editar', comida.id]" class="btn btn-outline-primary btn-sm me-2">
-            Editar
-       </button>
-                   <button (click)="eliminarComida(comida.id)" class="btn btn-outline-danger btn-sm">Eliminar</button>
-          </td>
-        </tr>
-        <tr *ngIf="listComidasFiltradas.length === 0">
-          <td colspan="4" class="text-center text-muted p-4">No se encontraron registros.</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="col-lg-7">
+      <h4 class="text-secondary mb-3">Historial de Agendas</h4>
+      
+      <div *ngIf="misDiarios.length === 0" class="alert alert-light border text-center p-5">
+        <p class="text-muted mb-0">No has creado ningún blog de comida todavía.</p>
+      </div>
+
+      <div *ngFor="let diario of misDiarios" class="card shadow-sm mb-3 border-0 border-start border-4 border-primary">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <h5 class="card-title mb-0 fw-bold">{{ diario.titulo }}</h5>
+              <small class="text-muted"><i class="bi bi-calendar">📅</i> {{ diario.fecha }}</small>
+            </div>
+            <button (click)="eliminarBlog(diario.id)" class="btn btn-sm btn-link text-danger p-0">Eliminar</button>
+          </div>
+
+          <div class="mb-3">
+            <span *ngFor="let al of diario.alimentos" class="badge rounded-pill bg-light text-dark border me-1">
+              {{ al.alimento }} <small class="text-muted">{{ al.pivot.cantidad_gramos }}g</small>
+            </span>
+          </div>
+
+          <label class="form-label small fw-bold mb-1">Energía del Post:</label>
+          <div class="progress" style="height: 20px; border-radius: 10px;">
+            <div class="progress-bar progress-bar-striped bg-success" 
+                 role="progressbar" 
+                 [style.width.%]="(diario.totales.calorias / 2000) * 100">
+                 {{ diario.totales.calorias }} kcal
+            </div>
+          </div>
+          <div class="d-flex justify-content-between mt-1" style="font-size: 0.75rem;">
+            <span class="text-muted">0 kcal</span>
+            <span class="text-muted">Meta: 2000 kcal</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

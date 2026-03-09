@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Tabla para los "Blogs" o "Agendas"
         Schema::create('diarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->date('fecha');
@@ -24,7 +23,9 @@ return new class extends Migration
         Schema::create('diario_alimento', function (Blueprint $table) {
             $table->id();
             $table->foreignId('diario_id')->constrained('diarios')->onDelete('cascade');
-            $table->foreignId('registro_comida_id')->constrained('comidas')->onDelete('cascade');
+            
+            $table->foreignId('registro_comida_id')->constrained('registro_comidas')->onDelete('cascade');
+            
             $table->integer('cantidad_gramos')->default(100); 
             $table->timestamps();
         });

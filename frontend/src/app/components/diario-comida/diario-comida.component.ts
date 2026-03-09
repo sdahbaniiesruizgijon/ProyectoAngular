@@ -12,64 +12,87 @@ import { RouterModule } from '@angular/router';
   templateUrl: './diario-comida.component.html'
 })
 export class DiarioComidaComponent implements OnInit {
-  listComidas: Comida[] = [];
-  listComidasFiltradas: Comida[] = []; 
+  misDiarios: any[] = []; 
+  bibliotecaAlimentos: Comida[] = []; 
   
-  nuevaComida: Comida = { alimento: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0, fecha: '' };
+  nuevoBlog = {
+    titulo: '',
+    fecha: new Date().toISOString().split('T')[0],
+    alimentosSeleccionados: [] as any[]
+  };
 
   constructor(private _comidaService: ComidaService) {}
 
   ngOnInit(): void {
-    this.obtenerComidas();
+    this.cargarDatos();
   }
 
-
-obtenerComidas() {
-  this._comidaService.getListComidas().subscribe({
-    next: (data) => {
-      this.listComidas = data;
-      this.listComidasFiltradas = data;
-    },
-    error: (e) => console.error(e)
-  });
-}
-
-  filtrarComidas(event: any) {
-  const valor = event.target.value.toLowerCase().trim();
-
-  if (valor === '') {
-    this.listComidasFiltradas = this.listComidas; 
-  } else {
-    this.listComidasFiltradas = this.listComidas.filter(comida => 
-      comida.alimento.toLowerCase().includes(valor)
-    );
-  }
-}
-
-  agregarComida() {
-    this._comidaService.saveComida(this.nuevaComida).subscribe(() => {
-      this.obtenerComidas(); 
-      this.limpiarFormulario();
+  cargarDatos() {
+    this._comidaService.getListDiarios().subscribe({
+      next: (data) => this.misDiarios = data,
+      error: (e) => console.error('Error al cargar diarios:', e)
+    });
+    this._comidaService.getListComidas().subscribe({
+      next: (data) => this.bibliotecaAlimentos = data,
+      error: (e) => console.error('Error al cargar biblioteca:', e)
     });
   }
 
-  eliminarComida(id: any) {
-    this._comidaService.deleteComida(id).subscribe(() => {
-      this.obtenerComidas();
+  prepararAlimento(alimento: any) {
+    if (!alimento) return;
+    this.nuevoBlog.alimentosSeleccionados.push({
+      id: alimento.id,
+      nombre: alimento.alimento,
+      calorias: alimento.calorias,
+      cantidad: 100 
     });
   }
 
-  limpiarFormulario() {
-    this.nuevaComida = { alimento: '', calorias: 0, proteinas: 0, carbohidratos: 0, grasas: 0, fecha: '' };
+  quitarAlimentoPreparado(index: number) {
+    this.nuevoBlog.alimentosSeleccionados.splice(index, 1);
   }
 
-  get totalCalorias(): number {
-    return this.listComidas.reduce((acc, obj) => acc + obj.calorias, 0);
+  guardarAgendaCompleta() {
+    if (!this.nuevoBlog.titulo || this.nuevoBlog.alimentosSeleccionados.length === 0) {
+      alert("Faltan datos para publicar el blog");
+      return;
+    }
+
+    const payload = {
+      titulo: this.nuevoBlog.titulo,
+      fecha: this.nuevoBlog.fecha,
+      descripcion: '', // Importante para evitar error 500 en BD
+      alimentos: this.nuevoBlog.alimentosSeleccionados.map(a => ({
+        id: a.id,
+        cantidad: a.cantidad
+      }))
+    };
+
+    this._comidaService.saveDiario(payload).subscribe({
+      next: () => {
+        alert('¡Blog de comida guardado con éxito!');
+        this.nuevoBlog = { 
+          titulo: '', 
+          fecha: new Date().toISOString().split('T')[0], 
+          alimentosSeleccionados: [] 
+        };
+        this.cargarDatos(); 
+      },
+      error: (err) => {
+        console.error('Error POST:', err);
+        alert('Error al guardar: revisa la consola de Laravel');
+      }
+    });
   }
 
-  get porcentajeProgreso(): number {
-    const meta = 2000; 
-    const porcentaje = (this.totalCalorias / meta) * 100;
-    return porcentaje > 100 ? 100 : porcentaje;
+  eliminarBlog(id: number) {
+    if(confirm('¿Eliminar esta entrada del diario?')) {
+      this._comidaService.deleteDiario(id).subscribe(() => this.cargarDatos());
+    }
+  }
+
+  get totalKcalPreparadas(): number {
+    return this.nuevoBlog.alimentosSeleccionados.reduce((acc, a) => 
+      acc + (Number(a.calorias) * Number(a.cantidad) / 100), 0);
   }
 }

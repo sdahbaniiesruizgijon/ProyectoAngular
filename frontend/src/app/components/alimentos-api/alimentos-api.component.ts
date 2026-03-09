@@ -69,6 +69,10 @@ export class AlimentosApiComponent implements OnInit {
   }
 
 
+seleccionarAlimento(alimento: AlimentoAPI) {
+  this.generarGrafico(alimento.nutrients);
+}
+
   importarAlDiario(alimento: any) {
     const nueva: any = {
       alimento: alimento.label,

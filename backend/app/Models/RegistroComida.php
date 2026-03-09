@@ -9,8 +9,7 @@ class RegistroComida extends Model
 {
     use HasFactory;
 
-    protected $table = 'comidas'; 
-
+protected $table = 'registro_comidas';
     protected $fillable = [
         'alimento',
         'calorias',

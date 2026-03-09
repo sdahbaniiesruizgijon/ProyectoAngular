@@ -8,32 +8,48 @@ import { Comida } from '../interfaces/comida';
 })
 export class ComidaService {
   private myAppUrl = 'http://127.0.0.1:8000';
-  private myApiUrl = '/api/comidas/';
+  private apiComidas = '/api/comidas/';
+  private apiDiarios = '/api/diarios/'; 
 
   constructor(private http: HttpClient) { }
 
-  // Listar todos
+
   getListComidas(): Observable<Comida[]> {
-    return this.http.get<Comida[]>(`${this.myAppUrl}${this.myApiUrl}`);
+    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}`);
   }
 
-  // Eliminar
+  buscarAlimentos(termino: string): Observable<Comida[]> {
+    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}?buscar=${termino}`);
+  }
+
   deleteComida(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.myAppUrl}${this.myApiUrl}${id}`);
+    return this.http.delete<void>(`${this.myAppUrl}${this.apiComidas}${id}`);
   }
 
-  // Guardar 
-saveComida(comida: any): Observable<any> {
-  return this.http.post(`${this.myAppUrl}${this.myApiUrl}`, comida);
-}
+  saveComida(comida: any): Observable<any> {
+    return this.http.post(`${this.myAppUrl}${this.apiComidas}`, comida);
+  }
 
-  // Ver uno por ID
   getComida(id: number): Observable<Comida> {
-    return this.http.get<Comida>(`${this.myAppUrl}${this.myApiUrl}${id}`);
+    return this.http.get<Comida>(`${this.myAppUrl}${this.apiComidas}${id}`);
   }
 
-  // Actualizar
   updateComida(id: number, comida: Comida): Observable<void> {
-    return this.http.put<void>(`${this.myAppUrl}${this.myApiUrl}${id}`, comida);
+    return this.http.put<void>(`${this.myAppUrl}${this.apiComidas}${id}`, comida);
+  }
+
+
+  // Obtener todos los blogs guardados
+  getListDiarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.myAppUrl}${this.apiDiarios}`);
+  }
+
+  saveDiario(diario: any): Observable<any> {
+    return this.http.post(`${this.myAppUrl}${this.apiDiarios}`, diario);
+  }
+
+  // Eliminar un blog completo
+  deleteDiario(id: number): Observable<any> {
+    return this.http.delete(`${this.myAppUrl}${this.apiDiarios}${id}`);
   }
 }
