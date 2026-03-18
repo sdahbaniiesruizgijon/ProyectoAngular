@@ -17,23 +17,31 @@ class DiarioController extends Controller
     return \App\Models\diarios::with('alimentos')->where('user_id', 1)->get();
 }
 
- public function store(Request $request)
+public function store(Request $request)
 {
+    // 1. Creamos el diario
     $diario = diarios::create([
-        'user_id' => 1, // O auth()->id() si ya tienes login
+        'user_id' => 1, 
         'titulo' => $request->titulo,
         'fecha' => $request->fecha,
-        'descripcion' => $request->descripcion
+        'descripcion' => $request->descripcion ?? 'Entrada de diario'
     ]);
 
-    // IMPORTANTE: El nombre 'alimentos' debe coincidir con el método del modelo
-    if ($request->has('alimento_id')) {
-        $diario->alimentos()->attach($request->alimento_id, [
-            'cantidad_gramos' => $request->cantidad_gramos ?? 100
-        ]);
+    // 2. Procesamos el array de alimentos que viene de Angular
+    if ($request->has('alimentos') && is_array($request->alimentos)) {
+        
+        $formateados = [];
+        foreach ($request->alimentos as $item) {
+            // El ID del alimento es la clave, y la cantidad_gramos va al pivote
+            $formateados[$item['id']] = ['cantidad_gramos' => $item['cantidad']];
+        }
+
+        // Attach múltiple para guardar todos de una vez
+        $diario->alimentos()->attach($formateados);
     }
 
-    return response()->json($diario, 201);
+    // Cargamos la relación y los totales (accessor) para devolverlo completo
+    return response()->json($diario->load('alimentos'), 201);
 }
     public function show($id)
     {

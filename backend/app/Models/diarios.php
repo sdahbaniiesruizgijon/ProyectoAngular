@@ -9,17 +9,17 @@ class diarios extends Model
 {
     use HasFactory;
 
-    // ESTO ES OBLIGATORIO para que el controlador pueda guardar
     protected $fillable = ['user_id', 'titulo', 'fecha', 'descripcion'];
+
+    // AGREGA ESTA LÍNEA:
+    protected $appends = ['totales']; 
 
     public function alimentos()
     {
-        // Asegúrate de que los nombres de las tablas coincidan con lo que hicimos en SQL
         return $this->belongsToMany(RegistroComida::class, 'diario_alimento', 'diario_id', 'registro_comida_id')
                     ->withPivot('cantidad_gramos')
                     ->withTimestamps();
     }
-
 
     public function getTotalesAttribute()
     {
@@ -30,15 +30,15 @@ class diarios extends Model
             'grasas' => 0
         ];
 
+        // Importante: Redondear para que el HTML no muestre muchos decimales
         foreach ($this->alimentos as $alimento) {
             $factor = $alimento->pivot->cantidad_gramos / 100;
-            $totales['calorias'] += $alimento->calorias * $factor;
-            $totales['proteinas'] += $alimento->proteinas * $factor;
-            $totales['carbohidratos'] += $alimento->carbohidratos * $factor;
-            $totales['grasas'] += $alimento->grasas * $factor;
+            $totales['calorias'] += round($alimento->calorias * $factor, 2);
+            $totales['proteinas'] += round($alimento->proteinas * $factor, 2);
+            $totales['carbohidratos'] += round($alimento->carbohidratos * $factor, 2);
+            $totales['grasas'] += round($alimento->grasas * $factor, 2);
         }
 
         return $totales;
     }
-
 }
