@@ -1,0 +1,27 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow border-0">
+        <div class="card-body p-4">
+          <h3 class="text-center mb-4">Iniciar Sesión</h3>
+          <form (ngSubmit)="onLogin()">
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" [(ngModel)]="user.email" name="email" class="form-control" required email>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" [(ngModel)]="user.password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">Entrar</button>
+            
+            <div class="text-center">
+              <p class="mb-0">¿No tienes cuenta?</p>
+              <a routerLink="/register" class="text-decoration-none">Regístrate aquí</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

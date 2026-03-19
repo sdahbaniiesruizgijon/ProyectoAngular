@@ -1,12 +1,17 @@
-<app-navbar></app-navbar>
+<div class="d-flex flex-column min-vh-100">
 
-<main class="container py-4" style="min-height: 85vh;">
-  <router-outlet></router-outlet>
-</main>
+  <app-navbar *ngIf="authService.estaLogueado()"></app-navbar>
 
-<footer class="bg-dark text-white text-center py-4 mt-auto">
-  <div class="container">
-    <p class="mb-1">© 2026 NutriApp - Proyecto Final Angular & Laravel</p>
-    <small class="text-muted">Desarrollado para la asignatura de Programación Web</small>
-  </div>
-</footer>
+  <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <footer *ngIf="authService.estaLogueado()" class="bg-dark text-white text-center py-3">
+    <div class="container">
+      <p class="mb-0">© 2026 NutriApp - Proyecto Final</p>
+    </div>
+  </footer>
+
+</div>

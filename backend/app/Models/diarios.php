@@ -11,7 +11,7 @@ class diarios extends Model
 
     protected $fillable = ['user_id', 'titulo', 'fecha', 'descripcion'];
 
-    // AGREGA ESTA LÍNEA:
+    
     protected $appends = ['totales']; 
 
     public function alimentos()
@@ -30,7 +30,7 @@ class diarios extends Model
             'grasas' => 0
         ];
 
-        // Importante: Redondear para que el HTML no muestre muchos decimales
+        // Redondeamos
         foreach ($this->alimentos as $alimento) {
             $factor = $alimento->pivot->cantidad_gramos / 100;
             $totales['calorias'] += round($alimento->calorias * $factor, 2);

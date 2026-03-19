@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AppNavbarComponent } from './components/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 
 @Component({
@@ -12,5 +13,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css' 
 })
 export class AppComponent {
+  constructor(public authService: AuthService) {}
   title = 'NutriApp - Mi Diario de Salud';
 }
