@@ -13,7 +13,7 @@
     <div class="col-md-6 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Detalle del Primer Resultado</h5>
+          <h5 class="mb-0">Detalle del Resultado</h5>
         </div>
         <div class="card-body d-flex flex-column align-items-center">
           <img [src]="resultadosBusqueda[0].image" class="img-fluid rounded-circle mb-3" 
@@ -27,9 +27,6 @@
             </button>
           </div>
         </div>
-        <div class="card-footer text-muted text-center">
-          Datos de Open Food Facts
-        </div>
       </div>
     </div>
 
@@ -38,8 +35,8 @@
         <div class="card-header bg-info text-white">
           <h5 class="mb-0">Desglose Nutricional</h5>
         </div>
-        <div class="card-body d-flex flex-column justify-content-center">
-          <canvas id="nutrientsChart"></canvas>
+        <div class="card-body" style="min-height: 300px; position: relative;">
+          <canvas #nutrientsChart></canvas>
         </div>
       </div>
     </div>
@@ -48,7 +45,7 @@
   <h3 *ngIf="resultadosBusqueda.length > 1" class="mt-5 mb-3 text-secondary">Otros Resultados Relevantes:</h3>
   <div *ngIf="resultadosBusqueda.length > 1" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     <div class="col" *ngFor="let alimento of resultadosBusqueda; let i = index">
-      <div *ngIf="i > 0" class="card shadow-sm h-100">
+      <div *ngIf="i > 0" class="card shadow-sm h-100" (click)="seleccionarAlimento(alimento)" style="cursor: pointer;">
         <div class="row g-0">
           <div class="col-4">
             <img [src]="alimento.image" class="img-fluid rounded-start h-100" 
@@ -60,7 +57,7 @@
               <p class="card-text small text-muted mb-auto">
                 {{ alimento.nutrients.ENERC_KCAL | number:'1.0-0' }} kcal
               </p>
-              <button class="btn btn-outline-success btn-sm mt-2" (click)="importarAlDiario(alimento)">
+              <button class="btn btn-outline-success btn-sm mt-2" (click)="importarAlDiario(alimento); $event.stopPropagation()">
                 <i class="bi bi-plus-circle"></i> Añadir
               </button>
             </div>
@@ -69,7 +66,6 @@
       </div>
     </div>
   </div>
-
 
   <div *ngIf="busqueda.trim() !== '' && resultadosBusqueda.length === 0" class="alert alert-warning text-center mt-4">
     No se encontraron resultados para "{{ busqueda }}".

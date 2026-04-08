@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NutricionApiService } from '../../services/nutricion-api.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { Chart } from 'chart.js/auto'; 
 import { ComidaService } from '../../services/comida.service'; 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 interface Nutrients {
   ENERC_KCAL: number;
@@ -28,6 +28,8 @@ interface AlimentoAPI {
   styleUrl: './alimentos-api.component.css'
 })
 export class AlimentosApiComponent implements OnInit {
+  @ViewChild('nutrientsChart') chartCanvas!: ElementRef<HTMLCanvasElement>;
+  
   busqueda: string = '';
   resultadosBusqueda: AlimentoAPI[] = []; 
   chart: any;
@@ -38,8 +40,7 @@ export class AlimentosApiComponent implements OnInit {
     private http: HttpClient
   ) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   buscar() {
     if (this.busqueda.trim() === '') {
@@ -47,28 +48,31 @@ export class AlimentosApiComponent implements OnInit {
       return;
     }
 
-    this._apiExterna.buscarAlimento(this.busqueda).subscribe(data => {
-      console.log(data); 
+    this._apiExterna.buscarAlimento(this.busqueda).subscribe({
+      next: (data) => {
+        if (data && data.products) {
+          this.resultadosBusqueda = data.products
+            .filter((p: any) => p.product_name && p.nutriments) 
+            .map((p: any) => ({
+              label: p.product_name,
+              image: p.image_url || 'https://via.placeholder.com/150?text=No+Image', 
+              nutrients: {
+                ENERC_KCAL: p.nutriments['energy-kcal_100g'] || 0,
+                PROCNT: p.nutriments.proteins_100g || 0,
+                CHOCDF: p.nutriments.carbohydrates_100g || 0,
+                FAT: p.nutriments.fat_100g || 0
+              },
+              originalData: p
+            }));
 
-      this.resultadosBusqueda = data.products
-        .filter((p: any) => p.product_name && p.nutriments['energy-kcal_100g']) 
-        .map((p: any) => ({
-          label: p.product_name,
-          image: p.image_url || 'https://via.placeholder.com/150?text=No+Image', 
-          nutrients: {
-            ENERC_KCAL: p.nutriments['energy-kcal_100g'] || 0,
-            PROCNT: p.nutriments.proteins_100g || 0,
-            CHOCDF: p.nutriments.carbohydrates_100g || 0,
-            FAT: p.nutriments.fat_100g || 0
-          },
-          originalData: p
-        }));
-
-      if (this.resultadosBusqueda.length > 0) {
-        this.generarGrafico(this.resultadosBusqueda[0].nutrients);
-      } else {
-        this.destruirGrafico();
-      }
+          if (this.resultadosBusqueda.length > 0) {
+            setTimeout(() => {
+              this.generarGrafico(this.resultadosBusqueda[0].nutrients);
+            }, 150);
+          }
+        }
+      },
+      error: (err) => console.error(err)
     });
   }
 
@@ -77,43 +81,50 @@ export class AlimentosApiComponent implements OnInit {
   }
 
   importarAlDiario(producto: any) {
+    const token = localStorage.getItem('token'); 
+    if (!token) {
+      alert('Sesión no válida. Por favor, inicia sesión de nuevo.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+
     const p = producto.originalData ? producto.originalData : producto;
-    
     const comidaParaGuardar = {
       alimento: p.product_name || producto.label || 'Sin nombre',
-      calorias: p.nutriments?.['energy-kcal_100g'] || producto.nutrients?.ENERC_KCAL || 0,
-      proteinas: p.nutriments?.proteins_100g || producto.nutrients?.PROCNT || 0,
-      carbohidratos: p.nutriments?.carbohydrates_100g || producto.nutrients?.CHOCDF || 0,
-      grasas: p.nutriments?.fat_100g || producto.nutrients?.FAT || 0
+      calorias: Math.round(p.nutriments?.['energy-kcal_100g'] || producto.nutrients?.ENERC_KCAL || 0),
+      proteinas: Math.round(p.nutriments?.proteins_100g || producto.nutrients?.PROCNT || 0),
+      carbohidratos: Math.round(p.nutriments?.carbohydrates_100g || producto.nutrients?.CHOCDF || 0),
+      grasas: Math.round(p.nutriments?.fat_100g || producto.nutrients?.FAT || 0),
+      fecha: new Date().toISOString().split('T')[0]
     };
 
-    this.http.post('http://127.0.0.1:8000/api/comidas', comidaParaGuardar)
+    this.http.post('https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api/comidas', comidaParaGuardar, { headers })
       .subscribe({
-        next: (res) => alert('¡Alimento importado con éxito!'),
-        error: (err) => console.error('Error detallado:', err)
+        next: () => alert('¡Guardado con éxito!'),
+        error: (err) => {
+          console.error(err);
+          alert('Error al guardar en el servidor.');
+        }
       });
-  }
-
-  cargarAlimentosDesdeDB() {
-    console.log('Alimento guardado. Lista actualizada en segundo plano.');
   }
 
   generarGrafico(nutrients: Nutrients) {
     this.destruirGrafico(); 
 
-    const ctx = document.getElementById('nutrientsChart') as HTMLCanvasElement;
-    if (!ctx) return;
+    if (!this.chartCanvas) return;
+    const ctx = this.chartCanvas.nativeElement;
 
     this.chart = new Chart(ctx, {
       type: 'pie',
       data: {
         labels: ['Proteínas (g)', 'Carbohidratos (g)', 'Grasas (g)'],
         datasets: [{
-          data: [
-            nutrients.PROCNT,
-            nutrients.CHOCDF,
-            nutrients.FAT
-          ],
+          data: [nutrients.PROCNT, nutrients.CHOCDF, nutrients.FAT],
           backgroundColor: [
             'rgba(255, 99, 132, 0.8)',
             'rgba(54, 162, 235, 0.8)',
@@ -129,14 +140,10 @@ export class AlimentosApiComponent implements OnInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-          legend: {
-            position: 'top',
-          },
-          title: {
-            display: true,
-            text: `Macronutrientes`
-          }
+          legend: { position: 'top' },
+          title: { display: true, text: `Macronutrientes` }
         }
       }
     });

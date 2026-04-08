@@ -6,12 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class NutricionApiService {
-  private baseUrl = 'https://world.openfoodfacts.org/cgi/search.pl';
+  // Ahora la URL apunta a tu propio Backend (Laravel)
+  private baseUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api/buscar-alimento';
 
   constructor(private http: HttpClient) { }
 
   buscarAlimento(nombre: string): Observable<any> {
-    const url = `${this.baseUrl}?search_terms=${nombre}&search_simple=1&action=process&json=1&page_size=5`;
+    // Laravel se encargará de añadir todos los parámetros (json=1, action=process, etc.)
+    // Nosotros solo le enviamos el término de búsqueda 'q'
+    const url = `${this.baseUrl}?q=${nombre}`;
     return this.http.get(url);
   }
 }

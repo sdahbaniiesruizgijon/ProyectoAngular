@@ -12,11 +12,20 @@ class RegistroComidaController extends Controller
         return RegistroComida::all();
     }
 
-    public function store(Request $request)
-    {
-        $comida = RegistroComida::create($request->all());
-        return response()->json($comida, 201);
+public function store(Request $request) {
+    if (!$request->user()) {
+        return response()->json(['message' => 'No autenticado'], 401);
     }
+
+    return $request->user()->comidas()->create([
+        'alimento'      => $request->alimento,
+        'calorias'      => $request->calorias,
+        'proteinas'     => $request->proteinas ?? 0,
+        'carbohidratos' => $request->carbohidratos ?? 0,
+        'grasas'        => $request->grasas ?? 0,
+        'fecha'         => $request->fecha ?? now(), // Si no hay fecha, usa la de hoy
+    ]);
+}
 
     public function show($id)
     {

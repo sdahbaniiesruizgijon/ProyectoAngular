@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router'; // Añadimos Router
-import { AuthService } from '../../services/auth.service'; // Asegúrate de que la ruta sea correcta
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -12,17 +12,23 @@ import { AuthService } from '../../services/auth.service'; // Asegúrate de que 
 })
 export class AppNavbarComponent { 
 
-  // Inyectamos el servicio y el router
-  constructor(private authService: AuthService, private router: Router) {}
+  // Cambiamos a 'public' para que el HTML pueda acceder a sus métodos como estaLogueado()
+  constructor(public authService: AuthService, private router: Router) {}
 
   toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
   }
 
-  // Método para el botón de cerrar sesión
   onLogout() {
-    this.authService.logout(); // Llama al método que borra el token
-    this.router.navigate(['/login']); // Te manda al login
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión:', err);
+        // Aun si falla el servidor, forzamos la navegación al login
+        this.router.navigate(['/login']);
+      }
+    });
   }
-
 }
