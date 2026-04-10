@@ -13,14 +13,8 @@ class RegistroComida extends Model
     protected $table = 'registro_comidas';
     
     protected $fillable = [
-        'alimento',
-        'calorias',
-        'proteinas',
-        'carbohidratos',
-        'grasas',
-        'fecha',
-        'user_id'
-    ];
+    'user_id', 'alimento', 'calorias', 'proteinas', 'carbohidratos', 'grasas', 'fecha'
+];
 
     public function diarios()
     {

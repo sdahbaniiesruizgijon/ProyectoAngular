@@ -6,8 +6,8 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-
-  private apiUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api';
+//https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api
+  private apiUrl = 'http://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api';
 
   constructor(private http: HttpClient) {}
 

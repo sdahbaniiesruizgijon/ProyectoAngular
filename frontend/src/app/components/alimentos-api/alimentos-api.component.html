@@ -1,76 +1,75 @@
 <div class="container mt-4">
-  <h2 class="mb-4">Buscador Global de Alimentos (API)</h2>
+  <h2 class="text-center mb-4">Buscador de Alimentos</h2>
 
-  <div class="input-group mb-4 shadow-sm">
-    <input type="text" class="form-control form-control-lg" placeholder="Ej: Manzana, Pollo, Arroz..."
-           [(ngModel)]="busqueda" (keyup.enter)="buscar()">
-    <button class="btn btn-primary btn-lg" (click)="buscar()">
-      <i class="bi bi-search"></i> Buscar
-    </button>
+  <div class="buscador-caja mb-5">
+    <div class="input-group shadow-sm">
+      <input type="text" class="form-control" placeholder="Buscar alimento..."
+             [(ngModel)]="busqueda" (keyup.enter)="buscar()">
+      <button class="btn btn-primary" (click)="buscar()" [disabled]="cargando">
+        {{ cargando ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
   </div>
 
-  <div *ngIf="resultadosBusqueda.length > 0" class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">Detalle del Resultado</h5>
-        </div>
-        <div class="card-body d-flex flex-column align-items-center">
-          <img [src]="resultadosBusqueda[0].image" class="img-fluid rounded-circle mb-3" 
-               alt="{{ resultadosBusqueda[0].label }}" style="width: 150px; height: 150px; object-fit: cover;">
-          <h4 class="card-title text-center">{{ resultadosBusqueda[0].label }}</h4>
-          <p class="card-text text-muted">Calorías: {{ resultadosBusqueda[0].nutrients.ENERC_KCAL | number:'1.0-0' }} kcal</p>
-          
-          <div class="mt-auto w-100 text-center">
-            <button class="btn btn-success mt-3" (click)="importarAlDiario(resultadosBusqueda[0])">
-              <i class="bi bi-journal-plus"></i> Importar a mi Diario
+  <div *ngIf="cargando" class="text-center my-5">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2 text-primary fw-bold">Consultando base de datos...</p>
+  </div>
+
+  <div *ngIf="!cargando && resultadosBusqueda.length > 0">
+    <div class="row">
+      
+      <div class="col-md-6 mb-4">
+        <div class="card card-principal shadow-sm text-center">
+          <div class="card-body">
+            <img [src]="resultadosBusqueda[0]?.image" class="img-alimento mb-3" alt="Imagen del alimento">
+            <h3>{{ resultadosBusqueda[0]?.label }}</h3>
+            <p class="text-success fw-bold fs-4">{{ resultadosBusqueda[0]?.nutrients?.kcal }} kcal</p>
+            <button class="btn btn-success w-100 py-2 shadow-sm" (click)="importarAlDiario(resultadosBusqueda[0])">
+              <i class="bi bi-journal-plus"></i> Añadir a mi Diario
             </button>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-6 mb-4">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-info text-white">
-          <h5 class="mb-0">Desglose Nutricional</h5>
-        </div>
-        <div class="card-body" style="min-height: 300px; position: relative;">
-          <canvas #nutrientsChart></canvas>
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white fw-bold text-secondary">Distribución Nutricional</div>
+          <div class="card-body container-grafico">
+            <canvas #nutrientsChart></canvas>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <h3 *ngIf="resultadosBusqueda.length > 1" class="mt-5 mb-3 text-secondary">Otros Resultados Relevantes:</h3>
-  <div *ngIf="resultadosBusqueda.length > 1" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <div class="col" *ngFor="let alimento of resultadosBusqueda; let i = index">
-      <div *ngIf="i > 0" class="card shadow-sm h-100" (click)="seleccionarAlimento(alimento)" style="cursor: pointer;">
-        <div class="row g-0">
-          <div class="col-4">
-            <img [src]="alimento.image" class="img-fluid rounded-start h-100" 
-                 alt="{{ alimento.label }}" style="object-fit: cover;">
-          </div>
-          <div class="col-8">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ alimento.label }}</h5>
-              <p class="card-text small text-muted mb-auto">
-                {{ alimento.nutrients.ENERC_KCAL | number:'1.0-0' }} kcal
-              </p>
-              <button class="btn btn-outline-success btn-sm mt-2" (click)="importarAlDiario(alimento); $event.stopPropagation()">
-                <i class="bi bi-plus-circle"></i> Añadir
+    <h4 class="mt-4 mb-3 text-secondary border-bottom pb-2">Otros resultados encontrados</h4>
+    <div class="row">
+      <div class="col-md-6 col-lg-4 mb-3" *ngFor="let alimento of resultadosBusqueda; let i = index">
+        <div *ngIf="i > 0" class="card card-pequena shadow-sm h-100" (click)="seleccionarAlimento(alimento)" style="cursor: pointer;">
+          <div class="card-body d-flex flex-column">
+            
+            <div class="d-flex align-items-center mb-3">
+              <img [src]="alimento.image" class="img-mini me-3" alt="Miniatura" style="width: 50px; height: 50px; object-fit: cover;">
+              <div class="overflow-hidden">
+                <h6 class="mb-0 text-truncate fw-bold">{{ alimento.label }}</h6>
+                <small class="text-muted">{{ alimento.nutrients.kcal }} kcal</small>
+              </div>
+            </div>
+            
+            <div class="d-grid mt-auto">
+              <button class="btn btn-sm btn-outline-success py-1" 
+                      (click)="importarAlDiario(alimento); $event.stopPropagation()">
+                <i class="bi bi-plus-lg"></i> Añadir
               </button>
             </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="busqueda.trim() !== '' && resultadosBusqueda.length === 0" class="alert alert-warning text-center mt-4">
-    No se encontraron resultados para "{{ busqueda }}".
-  </div>
-  <div *ngIf="busqueda.trim() === ''" class="alert alert-info text-center mt-4">
-    Introduce un alimento para buscar.
+  <div *ngIf="!cargando && busqueda !== '' && resultadosBusqueda.length === 0" class="alert alert-light text-center shadow-sm mt-4">
+    <i class="bi bi-search"></i> No se han encontrado alimentos con ese nombre.
   </div>
 </div>

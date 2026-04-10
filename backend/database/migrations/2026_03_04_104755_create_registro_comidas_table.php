@@ -10,18 +10,21 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('registro_comidas', function (Blueprint $table) {
+{
+    Schema::create('registro_comidas', function (Blueprint $table) {
         $table->id();
+        // ESTA ES LA LÍNEA QUE TE FALTA:
+        $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+        
         $table->string('alimento');
         $table->integer('calorias');
-        $table->float('proteinas')->default(0);      // <-- AÑADE ESTO
-        $table->float('carbohidratos')->default(0);  // <-- AÑADE ESTO
-        $table->float('grasas')->default(0);         // <-- AÑADE ESTO
-        $table->date('fecha')->nullable();           // La hacemos nullable por si no envías fecha
+        $table->integer('proteinas')->default(0);
+        $table->integer('carbohidratos')->default(0);
+        $table->integer('grasas')->default(0);
+        $table->date('fecha');
         $table->timestamps();
-        });
-    }
+    });
+}
 
     /**
      * Reverse the migrations.

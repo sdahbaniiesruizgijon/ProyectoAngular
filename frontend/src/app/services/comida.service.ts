@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Importamos HttpHeaders
 import { Observable } from 'rxjs';
 import { Comida } from '../interfaces/comida';
 
@@ -7,49 +7,65 @@ import { Comida } from '../interfaces/comida';
   providedIn: 'root'
 })
 export class ComidaService {
-  private myAppUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public';
+  private myAppUrl = 'http://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public';
   private apiComidas = '/api/comidas/';
   private apiDiarios = '/api/diarios/'; 
 
   constructor(private http: HttpClient) { }
 
+  // 1. Creador de cabeceras dinámico
+  private getHeaders() {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  // --- MÉTODOS DE COMIDAS ---
 
   getListComidas(): Observable<Comida[]> {
-    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}`);
+    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}`, { headers: this.getHeaders() });
   }
 
   buscarAlimentos(termino: string): Observable<Comida[]> {
-    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}?buscar=${termino}`);
+    return this.http.get<Comida[]>(`${this.myAppUrl}${this.apiComidas}?buscar=${termino}`, { headers: this.getHeaders() });
   }
 
   deleteComida(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.myAppUrl}${this.apiComidas}${id}`);
+    return this.http.delete<void>(`${this.myAppUrl}${this.apiComidas}${id}`, { headers: this.getHeaders() });
   }
 
   saveComida(comida: any): Observable<any> {
-    return this.http.post(`${this.myAppUrl}${this.apiComidas}`, comida);
+    return this.http.post(`${this.myAppUrl}${this.apiComidas}`, comida, { headers: this.getHeaders() });
   }
 
   getComida(id: number): Observable<Comida> {
-    return this.http.get<Comida>(`${this.myAppUrl}${this.apiComidas}${id}`);
+    return this.http.get<Comida>(`${this.myAppUrl}${this.apiComidas}${id}`, { headers: this.getHeaders() });
   }
 
   updateComida(id: number, comida: Comida): Observable<void> {
-    return this.http.put<void>(`${this.myAppUrl}${this.apiComidas}${id}`, comida);
+    return this.http.put<void>(`${this.myAppUrl}${this.apiComidas}${id}`, comida, { headers: this.getHeaders() });
   }
 
 
-  // Obtener todos los blogs guardados
+  // --- MÉTODOS DE DIARIOS (Aquí estaba el fallo principal) ---
+
   getListDiarios(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.myAppUrl}${this.apiDiarios}`);
+    // Añadimos las cabeceras para que Laravel sepa de qué usuario son los diarios
+    return this.http.get<any[]>(`${this.myAppUrl}${this.apiDiarios}`, { headers: this.getHeaders() });
   }
 
   saveDiario(diario: any): Observable<any> {
-    return this.http.post(`${this.myAppUrl}${this.apiDiarios}`, diario);
+    // Es vital enviar el token aquí para que Laravel asocie el blog al usuario logueado
+    return this.http.post(`${this.myAppUrl}${this.apiDiarios}`, diario, { headers: this.getHeaders() });
   }
 
-  // Eliminar un blog completo
+  updateDiario(id: number, diario: any): Observable<any> {
+    return this.http.put(`${this.myAppUrl}${this.apiDiarios}${id}`, diario, { headers: this.getHeaders() });
+  }
+
   deleteDiario(id: number): Observable<any> {
-    return this.http.delete(`${this.myAppUrl}${this.apiDiarios}${id}`);
+    return this.http.delete(`${this.myAppUrl}${this.apiDiarios}${id}`, { headers: this.getHeaders() });
   }
 }

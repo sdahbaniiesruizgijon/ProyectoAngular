@@ -1,0 +1,65 @@
+// Variables locales de componente para fácil mantenimiento
+$dark-card-bg: #1e1e1e;
+$dark-text-main: #e0e0e0;
+$dark-text-muted: #b0b0b0;
+$laravel-red: #f4645f;
+$angular-red: #dd0031;
+
+// Estilo base del componente (Modo Claro)
+.card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.125);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+}
+
+// Lógica de MODO NOCHE (RA 2.e y RA 6)
+// Usamos :host-context para detectar si el body tiene la clase dark-mode
+:host-context(body.dark-mode) {
+  .container {
+    background-color: transparent; // Se adapta al fondo del body
+  }
+
+  h1, .text-dark {
+    color: #fff !important;
+  }
+
+  p, .text-muted {
+    color: $dark-text-muted !important;
+  }
+
+  .card {
+    background-color: $dark-card-bg !important;
+    border-color: #333 !important;
+    color: $dark-text-main;
+
+    // Ajuste de los encabezados de las tarjetas en modo oscuro
+    h2 {
+      color: #64b5f6 !important; // Un azul más suave para lectura
+      border-bottom-color: #444 !important;
+    }
+  }
+
+  // Estilo específico para el bloque de Backend/Laravel en modo oscuro
+  .bg-light {
+    background-color: #252525 !important;
+  }
+
+  // El bloque de "Divulgación y Comunidad" (el oscuro) ya se ve bien, 
+  // pero podemos darle un borde para separarlo mejor
+  .bg-dark {
+    border: 1px solid #444;
+    background-color: #000 !important;
+  }
+
+  // Ajuste de los badges y códigos
+  code {
+    background-color: #333;
+    color: #ff79c6;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+}

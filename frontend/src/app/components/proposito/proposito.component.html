@@ -1,10 +1,76 @@
-<div class="cardP p-5 shadow-sm border-0 bg-light">
-  <h1 class="text-primary">Sobre NutriSport</h1>
-  <p class="lead">Este proyecto nace con el objetivo de ayudar a deportistas a trackear su nutrición diaria conectando una base de datos local con información global de APIs externas.</p>
-  <hr>
-  <ul>
-    <li><strong>Frontend:</strong> Angular 17+</li>
-    <li><strong>Backend:</strong> Laravel 10 (API REST)</li>
-    <li><strong>API Externa:</strong> Open Food Facts</li>
-  </ul>
+<div class="container my-5">
+  <header class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary">Stack Tecnológico NutriSport</h1>
+    <p class="fs-5 text-secondary">Arquitectura Full-Stack orientada a la salud y el rendimiento deportivo</p>
+    <hr class="w-25 mx-auto border-primary border-3">
+  </header>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <section class="card h-100 shadow-sm border-0 p-4">
+        <h2 class="h4 border-bottom pb-2 mb-3 text-dark">
+          <i class="bi bi-layout-text-window-reverse me-2"></i>Interfaz y UX (DIW)
+        </h2>
+        <p class="small text-muted">Desarrollo de interfaz bajo metodología <strong>Mobile-First</strong> y frameworks de última generación.</p>
+        
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <strong>Framework CSS:</strong> Bootstrap 5 personalizado íntegramente mediante <span class="badge bg-light text-danger border">Sass</span>, permitiendo la redefinición de estilos globales y variables de marca.
+          </li>
+          <li class="mb-2">
+            <strong>Accesibilidad (RA 6):</strong> Implementación de semántica HTML5, roles ARIA y contrastes validados para garantizar la navegación a todo tipo de usuarios.
+          </li>
+          <li class="mb-2">
+            <strong>Diseño Homogéneo:</strong> Uso de componentes de Angular 17+ para mantener una identidad visual coherente en todas las pantallas del aplicativo.
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="col-md-6">
+      <section class="card h-100 shadow-sm border-0 p-4 bg-light">
+        <h2 class="h4 border-bottom pb-2 mb-3 text-dark">
+          <i class="bi bi-server me-2"></i>Backend & API Engine
+        </h2>
+        <p class="small text-muted">Gestión de lógica de negocio y persistencia de datos segura.</p>
+        
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <strong>Core System:</strong> API REST desarrollada en <strong>Laravel 10</strong>, gestionando la autenticación mediante tokens y el control de recursos.
+          </li>
+          <li class="mb-2">
+            <strong>Base de Datos:</strong> Almacenamiento local para la gestión de usuarios, diarios de comida y bibliotecas personalizadas de alimentos.
+          </li>
+          <li class="mb-2">
+            <strong>Integración Externa:</strong> Conexión en tiempo real con la API de <em>Open Food Facts</em> para la obtención de datos nutricionales globales.
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="col-12 mt-4">
+      <section class="p-4 rounded shadow-sm bg-dark text-white">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h3 class="h5 text-info">Divulgación y Comunidad</h3>
+            <p class="mb-lg-0 small">Complementamos nuestra herramienta técnica con fuentes de información real y contenido de bienestar de calidad.</p>
+          </div>
+          <div class="col-lg-4 d-flex gap-2 justify-content-lg-end">
+            <a routerLink="/info-salud" class="btn btn-outline-info btn-sm">
+              <i class="bi bi-newspaper me-1"></i> Portal Salud
+            </a>
+            <a href="https://www.tiktok.com/&#64;aguscm14" target="_blank" class="btn btn-primary btn-sm">
+              <i class="bi bi-tiktok me-1"></i> Contenido &#64;aguscm14
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="mt-5 text-center">
+    <p class="text-muted" style="font-size: 0.8rem;">
+      Proyecto validado mediante herramientas de accesibilidad y validadores W3C para cumplimiento de estándares web.
+    </p>
+  </footer>
 </div>

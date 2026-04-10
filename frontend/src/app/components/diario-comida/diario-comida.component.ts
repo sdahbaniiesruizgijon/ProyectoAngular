@@ -5,7 +5,6 @@ import { ComidaService } from '../../services/comida.service';
 import { Comida } from '../../interfaces/comida';
 import { RouterModule } from '@angular/router';
 
-// Definición de interfaz local para el alimento en el carrito
 interface AlimentoSeleccionado {
   id: number;
   nombre: string;
@@ -17,13 +16,14 @@ interface AlimentoSeleccionado {
   selector: 'app-diario-comida',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './diario-comida.component.html'
+  templateUrl: './diario-comida.component.html',
+  styleUrls: ['./diario-comida.component.scss']
 })
 export class DiarioComidaComponent implements OnInit {
   misDiarios: any[] = []; 
   bibliotecaAlimentos: Comida[] = []; 
-
   fechaMinima: string = '';
+  editandoId: number | null = null; // Rastrear si estamos editando
   
   nuevoBlog = {
     titulo: '',
@@ -32,48 +32,35 @@ export class DiarioComidaComponent implements OnInit {
   };
 
   constructor(private _comidaService: ComidaService) {
-
     this.fechaMinima = new Date().toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
     this.cargarDatos();
+    this.cargarBiblioteca();
+  }
+
+  cargarBiblioteca(): void {
+    this._comidaService.getListComidas().subscribe({
+      next: (data) => this.bibliotecaAlimentos = data
+    });
   }
 
   cargarDatos(): void {
-  // Carga paralela de datos
-  this._comidaService.getListDiarios().subscribe({
-    next: (data) => {
-      // Calculamos los totales para cada diario antes de asignarlo
-      this.misDiarios = data.map((diario: any) => {
-        const totalCalorias = diario.alimentos.reduce((acc: number, al: any) => {
-          // Usamos la relación pivot (cantidad_gramos) y las calorías base del alimento
-          return acc + (al.calorias * al.pivot.cantidad_gramos / 100);
-        }, 0);
-
-        return {
-          ...diario,
-          totales: {
-            calorias: Math.round(totalCalorias) // Redondeamos para que quede limpio
-          }
-        };
-      });
-    },
-    error: (e) => console.error('Error al cargar diarios:', e)
-  });
-
-  this._comidaService.getListComidas().subscribe({
-    next: (data) => this.bibliotecaAlimentos = data,
-    error: (e) => console.error('Error al cargar biblioteca:', e)
-  });
-}
+    this._comidaService.getListDiarios().subscribe({
+      next: (res: any) => {
+        const datos = Array.isArray(res) ? res : (res.data || []);
+        this.misDiarios = datos.map((d: any) => ({
+          ...d,
+          caloriasTotales: d.totales?.calorias || 0
+        }));
+      }
+    });
+  }
 
   prepararAlimento(alimento: Comida): void {
     if (!alimento) return;
-
-    // Evitar duplicados: Si ya está, podrías sumar la cantidad en lugar de añadir una fila nueva
     const existe = this.nuevoBlog.alimentosSeleccionados.find(a => a.id === alimento.id);
-    
     if (existe) {
       existe.cantidad += 100;
     } else {
@@ -90,34 +77,66 @@ export class DiarioComidaComponent implements OnInit {
     this.nuevoBlog.alimentosSeleccionados.splice(index, 1);
   }
 
+  // Lógica de Edición: Carga los datos en el formulario
+  editarBlog(diario: any): void {
+    this.editandoId = diario.id;
+    this.nuevoBlog = {
+      titulo: diario.titulo,
+      fecha: diario.fecha,
+      alimentosSeleccionados: diario.alimentos.map((al: any) => ({
+        id: al.id,
+        nombre: al.alimento,
+        calorias: al.calorias,
+        cantidad: al.pivot?.cantidad_gramos || 100
+      }))
+    };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelarEdicion(): void {
+    this.resetFormulario();
+    this.editandoId = null;
+  }
+
   guardarAgendaCompleta(): void {
     if (!this.nuevoBlog.titulo || this.nuevoBlog.alimentosSeleccionados.length === 0) {
       alert("Por favor, asigna un título y añade al menos un alimento.");
       return;
     }
 
+    const alimentosPivot: any = {};
+    this.nuevoBlog.alimentosSeleccionados.forEach(a => {
+      alimentosPivot[a.id] = { cantidad_gramos: a.cantidad };
+    });
+
     const payload = {
       titulo: this.nuevoBlog.titulo,
       fecha: this.nuevoBlog.fecha,
-      descripcion: 'Entrada de diario', 
-      // Laravel suele preferir un array simple de IDs o objetos con pivote
-      alimentos: this.nuevoBlog.alimentosSeleccionados.map(a => ({
-        id: a.id,
-        cantidad: a.cantidad
-      }))
+      descripcion: 'Entrada de diario',
+      alimentos: alimentosPivot 
     };
 
-    this._comidaService.saveDiario(payload).subscribe({
-      next: () => {
-        alert('¡Diario guardado!');
-        this.resetFormulario();
-        this.cargarDatos(); 
-      },
-      error: (err) => {
-        console.error('Error en el servidor:', err);
-        alert('Error al guardar. Verifica la conexión con el backend.');
-      }
-    });
+    if (this.editandoId) {
+      this._comidaService.updateDiario(this.editandoId, payload).subscribe({
+        next: () => {
+          alert('¡Diario actualizado!');
+          this.finalizarAccion();
+        }
+      });
+    } else {
+      this._comidaService.saveDiario(payload).subscribe({
+        next: () => {
+          alert('¡Diario guardado!');
+          this.finalizarAccion();
+        }
+      });
+    }
+  }
+
+  private finalizarAccion(): void {
+    this.resetFormulario();
+    this.editandoId = null;
+    setTimeout(() => this.cargarDatos(), 500);
   }
 
   private resetFormulario(): void {
@@ -129,15 +148,13 @@ export class DiarioComidaComponent implements OnInit {
   }
 
   eliminarBlog(id: number): void {
-    if(confirm('¿Estás seguro de que deseas eliminar esta entrada?')) {
+    if(confirm('¿Estás seguro?')) {
       this._comidaService.deleteDiario(id).subscribe({
-        next: () => this.cargarDatos(),
-        error: (err) => console.error('Error al eliminar:', err)
+        next: () => this.cargarDatos()
       });
     }
   }
 
-  // Getter para calcular el total de calorías en tiempo real
   get totalKcalPreparadas(): number {
     return this.nuevoBlog.alimentosSeleccionados.reduce((acc, a) => 
       acc + (a.calorias * a.cantidad / 100), 0);

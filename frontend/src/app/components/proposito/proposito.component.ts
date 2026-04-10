@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-proposito',
   imports: [],
   templateUrl: './proposito.component.html',
-  styleUrl: './proposito.component.css'
+  styleUrl: './proposito.component.scss'
 })
 export class PropositoComponent {
 
