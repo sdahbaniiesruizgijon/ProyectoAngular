@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class NutricionApiService {
   // Ahora la URL apunta a tu propio Backend (Laravel)
   //https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api/buscar-alimento
-  private baseUrl = 'http://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api/buscar-alimento';
+  private baseUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api/buscar-alimento';
 
   constructor(private http: HttpClient) { }
 

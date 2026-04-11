@@ -7,7 +7,7 @@ import { Comida } from '../interfaces/comida';
   providedIn: 'root'
 })
 export class ComidaService {
-  private myAppUrl = 'http://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public';
+  private myAppUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public';
   private apiComidas = '/api/comidas/';
   private apiDiarios = '/api/diarios/'; 
 
