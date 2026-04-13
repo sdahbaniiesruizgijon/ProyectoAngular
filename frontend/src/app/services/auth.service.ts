@@ -7,7 +7,13 @@ import { Observable, tap } from 'rxjs';
 })
 export class AuthService {
 //https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api
-  private apiUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api';
+  // Opción recomendada: Añade la barra al final de la base
+private apiUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api';
+
+// Así, al concatenar, las rutas quedarán como:
+// .../api/login/
+// .../api/register/
+// .../api/logout/
 
   constructor(private http: HttpClient) {}
 
