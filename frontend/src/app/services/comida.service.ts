@@ -13,7 +13,7 @@ export class ComidaService {
 
   constructor(private http: HttpClient) { }
 
-  // 1. Creador de cabeceras dinámico con Token
+  //  Creador de cabeceras dinámico con Token
   private getHeaders() {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -63,10 +63,10 @@ export class ComidaService {
   }
 
   updateDiario(id: number, diario: any): Observable<any> {
-    return this.http.put(`${this.myAppUrl}${this.apiDiarios}${id}`, diario, { headers: this.getHeaders() });
+    return this.http.put(`${this.myAppUrl}${this.apiDiarios}/${id}`, diario, { headers: this.getHeaders() });
   }
 
   deleteDiario(id: number): Observable<any> {
-    return this.http.delete(`${this.myAppUrl}${this.apiDiarios}${id}`, { headers: this.getHeaders() });
+    return this.http.delete(`${this.myAppUrl}${this.apiDiarios}/${id}`, { headers: this.getHeaders() });
   }
 }

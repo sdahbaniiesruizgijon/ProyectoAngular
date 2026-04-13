@@ -77,7 +77,7 @@ export class DiarioComidaComponent implements OnInit {
     this.nuevoBlog.alimentosSeleccionados.splice(index, 1);
   }
 
-  // Lógica de Edición: Carga los datos en el formulario
+  // Carga los datos en el formulario
   editarBlog(diario: any): void {
     this.editandoId = diario.id;
     this.nuevoBlog = {

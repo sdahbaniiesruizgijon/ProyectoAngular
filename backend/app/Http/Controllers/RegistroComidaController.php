@@ -23,7 +23,7 @@ class RegistroComidaController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validamos los datos (Esto es clave para el RA 2 de DIW)
+        //  Validamos los datos (Esto es clave para el RA 2 de DIW)
         $validated = $request->validate([
             'alimento'      => 'required|string|max:255',
             'calorias'      => 'required|numeric',
@@ -33,7 +33,7 @@ class RegistroComidaController extends Controller
             'fecha'         => 'required|date',
         ]);
 
-        // 2. Creamos el registro a través de la relación del usuario
+        //  Creamos el registro a través de la relación del usuario
         // Laravel inyectará automáticamente el 'user_id' correcto.
         return $request->user()->comidas()->create($validated);
     }

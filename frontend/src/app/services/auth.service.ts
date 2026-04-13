@@ -10,11 +10,6 @@ export class AuthService {
   // Opción recomendada: Añade la barra al final de la base
 private apiUrl = 'https://ruix.iesruizgijon.es/sedahbani/ProyectoAngular/backend/public/api';
 
-// Así, al concatenar, las rutas quedarán como:
-// .../api/login/
-// .../api/register/
-// .../api/logout/
-
   constructor(private http: HttpClient) {}
 
   // Centralizamos los headers para no repetir código

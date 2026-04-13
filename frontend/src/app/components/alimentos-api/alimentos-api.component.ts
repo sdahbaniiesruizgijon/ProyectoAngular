@@ -6,7 +6,7 @@ import { Chart } from 'chart.js/auto';
 import { ComidaService } from '../../services/comida.service'; 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-// 1. Interfaz unificada con los nombres que usas en el HTML
+//  Interfaz unificada con los nombres que usas en el HTML
 interface Nutrients {
   kcal: number;       
   proteinas: number;  
@@ -133,7 +133,7 @@ export class AlimentosApiComponent implements OnInit {
       data: {
         labels: ['Proteínas (g)', 'Carbohidratos (g)', 'Grasas (g)'],
         datasets: [{
-          // Corregido: Usamos los nombres de la interfaz Nutrients
+          // Usamos los nombres de la interfaz Nutrients
           data: [nutrients.proteinas, nutrients.carbohidratos, nutrients.grasas],
           backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
           hoverOffset: 10

@@ -28,7 +28,7 @@ Route::get('/buscar-alimento', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     
-    // CRUD completo de Comidas (index, store, show, update, destroy)
+    // CRUD completo de Comidas 
     Route::apiResource('comidas', RegistroComidaController::class);
     
     // CRUD completo de Diarios

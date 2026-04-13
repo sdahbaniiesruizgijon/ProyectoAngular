@@ -44,24 +44,24 @@ class DiarioController extends Controller
 
     public function update(Request $request, string $id)
 {
-    // 1. Validar la entrada
+    // Validar la entrada
     $request->validate([
         'titulo'    => 'required|string|max:255',
         'fecha'     => 'required|date',
         'alimentos' => 'required|array', // El formato que enviamos desde Angular
     ]);
 
-    // 2. Buscar el diario del usuario autenticado
+    // Buscar el diario del usuario autenticado
     $diario = diarios::where('user_id', auth()->id())->findOrFail($id);
 
-    // 3. Actualizar los campos básicos
+    //  Actualizar los campos básicos
     $diario->update([
         'titulo'      => $request->titulo,
         'fecha'       => $request->fecha,
         'descripcion' => $request->descripcion ?? 'Actualizado desde la agenda',
     ]);
 
-    // 4. Sincronizar la tabla pivote (alimentos)
+    // 4. Sincronizar la tabla pivote 
     // sync() elimina las relaciones viejas y pone las nuevas con sus cantidades
     $diario->alimentos()->sync($request->alimentos);
 
