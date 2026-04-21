@@ -1,16 +1,15 @@
 <div class="d-flex flex-column min-vh-100">
 
-  <app-navbar *ngIf="authService.estaLogueado()"></app-navbar>
+  <app-navbar></app-navbar>
 
   <main class="flex-grow-1 d-flex align-items-center justify-content-center">
-    <div class="container">
-      <router-outlet></router-outlet>
+    <div class="container py-5"> <router-outlet></router-outlet>
     </div>
   </main>
 
-  <footer *ngIf="authService.estaLogueado()" class="bg-dark text-white text-center py-3">
+  <footer class="bg-dark text-white text-center py-3">
     <div class="container">
-      <p class="mb-0">© 2026 NutriApp - Proyecto Final</p>
+      <p class="mb-0">© 2026 NutriApp - Tu salud, nuestra prioridad</p>
     </div>
   </footer>
 

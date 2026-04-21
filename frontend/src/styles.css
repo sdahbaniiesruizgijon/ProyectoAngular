@@ -1,21 +1,64 @@
+/* --- FIX MODO OSCURO GLOBAL (CSS PURO) --- */
 
-body {
-  background-color: #f8f9fa;
+/* 1. Fondo y texto base */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #ffffff !important;
 }
 
-.dark-mode {
-  background-color: #121212 !important;
-  color: white !important;
-}
-.dark-mode .card {
-  background-color: #1e1e1e;
-  color: white;
-  border: 1px solid #333;
+/* 2. Forzar textos blancos en encabezados y párrafos */
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4, 
+body.dark-mode h5, 
+body.dark-mode h6, 
+body.dark-mode p, 
+body.dark-mode span, 
+body.dark-mode li, 
+body.dark-mode label, 
+body.dark-mode .nav-link {
+    color: #ffffff !important;
 }
 
-.dark-mode .cardP{
-  border-radius: 20px;
-  background-color: #1e1e1e;
-  color: rgb(0, 0, 0);
-  border: 1px solid #333;
+/* 3. Arreglar las Tarjetas (Cards) y contenedores blancos */
+body.dark-mode .card, 
+body.dark-mode .bg-white, 
+body.dark-mode .p-3.border.rounded {
+    background-color: #1e1e1e !important; 
+    border: 1px solid #333333 !important;
+    color: #ffffff !important;
+}
+
+/* 4. Sobreescribir colores de Bootstrap que molestan en el modo oscuro */
+body.dark-mode .text-dark, 
+body.dark-mode .text-secondary, 
+body.dark-mode .text-muted {
+    color: #b0b0b0 !important; /* Gris claro para que sea legible */
+}
+
+body.dark-mode .text-primary {
+    color: #4dabff !important; /* Un azul más claro para que resalte */
+}
+
+/* 5. Fix para el Navbar */
+body.dark-mode .navbar {
+    background-color: #000000 !important;
+    border-bottom: 1px solid #333333;
+}
+
+/* 6. Arreglo para los botones que salen vacíos o solo con borde */
+.btn-outline-danger {
+    border-width: 2px !important;
+    min-width: 40px;
+    min-height: 38px;
+}
+
+/* Asegurar que el icono dentro del botón sea visible */
+.btn-outline-danger i {
+    color: #dc3545;
+}
+
+body.dark-mode .btn-outline-danger i {
+    color: #ff4d4d;
 }

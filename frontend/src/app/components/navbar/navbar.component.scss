@@ -1,0 +1,41 @@
+.navbar {
+  padding: 0.8rem 0;
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+
+    .logo-circle {
+      width: 35px;
+      height: 35px;
+      background: #0d6efd;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      i { color: white; font-size: 1.1rem; }
+    }
+  }
+
+  .nav-link {
+    margin: 0 5px;
+    &.active {
+      color: #0d6efd !important;
+      font-weight: 600;
+    }
+  }
+
+  /* Botón Dark Mode */
+  .btn-dark-mode {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    &:hover { background: rgba(255,255,255,0.1); }
+  }
+}

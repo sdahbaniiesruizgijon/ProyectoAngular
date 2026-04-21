@@ -68,6 +68,35 @@
     </div>
   </div>
 
+  <div class="row mt-5 text-center g-4">
+  <div class="col-md-4">
+    <div class="p-3 border rounded bg-white shadow-sm">
+      <i class="bi bi-search fs-2 text-primary"></i>
+      <h3 class="h6 mt-2">Buscador Inteligente</h3>
+      <p class="small text-muted">Accede a miles de productos con Open Food Facts.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 border rounded bg-white shadow-sm">
+      <i class="bi bi-journal-check fs-2 text-primary"></i>
+      <h3 class="h6 mt-2">Diario de Comidas</h3>
+      <p class="small text-muted">Registra tus ingestas y controla tus macros diarios.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="p-3 border rounded bg-white shadow-sm">
+      <i class="bi bi-person-gear fs-2 text-primary"></i>
+      <h3 class="h6 mt-2">Perfil Personalizado</h3>
+      <p class="small text-muted">Ajusta tus metas según tu rendimiento deportivo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="text-center mt-5">
+    <a [routerLink]="['/login']" class="btn btn-primary btn-lg px-5 shadow">Acceder a la Plataforma</a>
+    <p class="text-muted mt-2 small">¿No tienes cuenta? <a [routerLink]="['/register']">Regístrate aquí</a></p>
+</div>
+
   <footer class="mt-5 text-center">
     <p class="text-muted" style="font-size: 0.8rem;">
       Proyecto validado mediante herramientas de accesibilidad y validadores W3C para cumplimiento de estándares web.
